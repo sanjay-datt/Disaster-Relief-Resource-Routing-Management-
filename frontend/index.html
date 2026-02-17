@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Relief Command Center</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="title">
+                    <span class="title-icon">🚨</span>
+                    <span>Disaster Relief Command</span>
+                </h1>
+                <p class="subtitle">Resource Routing & Priority Management System</p>
+            </div>
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-label">System Status</span>
+                    <span class="status-value online" id="systemStatus">OPERATIONAL</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Last Updated</span>
+                    <span class="status-value" id="lastUpdated">--:--:--</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs">
+            <button class="tab active" data-tab="dashboard">Dashboard</button>
+            <button class="tab" data-tab="priorities">Priority Scoring</button>
+            <button class="tab" data-tab="routing">Route Planning</button>
+            <button class="tab" data-tab="resources">Resource Management</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <div class="grid-2">
+                    <div class="card">
+                        <h2 class="card-title">Relief Centers</h2>
+                        <div id="centersList" class="data-list"></div>
+                        <button class="btn btn-primary" onclick="loadCenters()">Refresh Data</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h2 class="card-title">Affected Areas</h2>
+                        <div id="areasList" class="data-list"></div>
+                        <button class="btn btn-primary" onclick="loadAreas()">Refresh Data</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title">Road Network Status</h2>
+                    <div id="roadsList" class="data-list"></div>
+                    <button class="btn btn-primary" onclick="loadRoads()">Refresh Data</button>
+                </div>
+            </section>
+
+            <!-- Priority Scoring Tab -->
+            <section id="priorities" class="tab-content">
+                <div class="card">
+                    <h2 class="card-title">Priority Computation</h2>
+                    <p class="card-description">
+                        Calculate priority scores using: P = 0.5×severity + 0.3×(people/max) + 0.2×access_difficulty
+                    </p>
+                    <button class="btn btn-large btn-primary" onclick="computePriorities()">
+                        Calculate All Priorities
+                    </button>
+                    <div id="prioritiesResult" class="result-container"></div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title">Resource Allocation Summary</h2>
+                    <div id="allocationSummary" class="result-container">
+                        <p style="color: var(--text-muted);">Compute priorities first to see resource allocation.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Routing Tab -->
+            <section id="routing" class="tab-content">
+                <div class="grid-2">
+                    <div class="card">
+                        <h2 class="card-title">Single Route Planning</h2>
+                        <form id="routeForm" class="form">
+                            <div class="form-group">
+                                <label>Relief Center</label>
+                                <select id="routeCenterId" class="form-control" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Affected Area</label>
+                                <select id="routeAreaId" class="form-control" required></select>
+                            </div>
+                            <button type="submit" class="btn btn-large btn-primary">
+                                Find Shortest Route
+                            </button>
+                        </form>
+                        <div id="routeResult" class="result-container"></div>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title">Route Information</h2>
+                        <div id="routeInfo" class="result-container">
+                            <p style="color: var(--text-muted);">Select a route to see details</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Resources Tab -->
+            <section id="resources" class="tab-content">
+                <div class="grid-3">
+                    <div class="card">
+                        <h2 class="card-title">Add Relief Center</h2>
+                        <form id="addCenterForm" class="form">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Latitude</label>
+                                    <input type="number" step="0.0001" class="form-control" name="latitude" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Longitude</label>
+                                    <input type="number" step="0.0001" class="form-control" name="longitude" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Food Kits</label>
+                                <input type="number" class="form-control" name="food" value="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Water Units</label>
+                                <input type="number" class="form-control" name="water" value="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Medical Kits</label>
+                                <input type="number" class="form-control" name="medical" value="0" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Center</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title">Add Affected Area</h2>
+                        <form id="addAreaForm" class="form">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Latitude</label>
+                                    <input type="number" step="0.0001" class="form-control" name="latitude" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Longitude</label>
+                                    <input type="number" step="0.0001" class="form-control" name="longitude" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>People Count</label>
+                                <input type="number" class="form-control" name="peopleAffected" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Severity (1-5)</label>
+                                <input type="number" min="1" max="5" class="form-control" name="severity" value="3" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Access Difficulty</label>
+                                <select class="form-control" name="accessDifficulty" required>
+                                    <option value="0">Easy Access</option>
+                                    <option value="1">Difficult Access</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Required Food Kits</label>
+                                <input type="number" class="form-control" name="food" value="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Required Water Units</label>
+                                <input type="number" class="form-control" name="water" value="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Required Medical Kits</label>
+                                <input type="number" class="form-control" name="medical" value="0" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Area</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="card-title">Add Road Connection</h2>
+                        <form id="addRoadForm" class="form">
+                            <div class="form-group">
+                                <label>From Location</label>
+                                <select id="roadFrom" class="form-control" name="from" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>To Location</label>
+                                <select id="roadTo" class="form-control" name="to" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Distance (km)</label>
+                                <input type="number" step="0.1" class="form-control" name="distance" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Travel Time (minutes)</label>
+                                <input type="number" class="form-control" name="travelTime" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="isBlocked">
+                                    Road is Blocked
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Road</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Disaster Relief Resource Routing Platform v1.0 | Focus: Concept & Algorithm Implementation</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
