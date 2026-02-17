@@ -1,5 +1,5 @@
 // API Base URL
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://disaster-relief-resource-routing.onrender.com';
 
 // State
 let centers = [];
