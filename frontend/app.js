@@ -1,5 +1,5 @@
 // API Base URL
-const API_URL = 'https://disaster-relief-resource-routing.onrender.com';
+const API_URL = 'https://disaster-relief-resource-routing-ptoh.onrender.com/api';
 
 // State
 let centers = [];
